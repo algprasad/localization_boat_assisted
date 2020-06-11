@@ -12,9 +12,11 @@ LocalizationUWDroneBoat::LocalizationUWDroneBoat(ros::NodeHandle& nodeHandle)
     ROS_ERROR("Could not read parameters.");
     ros::requestShutdown();
   }
-  subscriber_ = nodeHandle_.subscribe(subscriberTopic_, 1,
-                                      &LocalizationUWDroneBoat::topicCallback, this);
-  serviceServer_ = nodeHandle_.advertiseService("get_average",
+  imu_subscriber_ = nodeHandle_.subscribe(imu_subscriber_topic_, 1,
+                                          &LocalizationUWDroneBoat::imuCallback, this);
+  odometry_subscriber_ = nodeHandle_.subscribe(odometry_subscriber_topic_, 1,  &LocalizationUWDroneBoat::odometryCallback, this );
+
+  serviceServer_ = nodeHandle_.advertiseService("future_addition",
                                                 &LocalizationUWDroneBoat::serviceCallback, this);
   ROS_INFO("Successfully launched node.");
 }
@@ -25,20 +27,27 @@ LocalizationUWDroneBoat::~LocalizationUWDroneBoat()
 
 bool LocalizationUWDroneBoat::readParameters()
 {
-  if (!nodeHandle_.getParam("subscriber_topic", subscriberTopic_)) return false;
+  if (!nodeHandle_.getParam("sub_imu_topic", imu_subscriber_topic_)) return false;
+  if (!nodeHandle_.getParam("sub_odometry_topic", odometry_subscriber_topic_)) return false;
+
   return true;
 }
 
-void LocalizationUWDroneBoat::topicCallback(const sensor_msgs::Temperature& message)
+void LocalizationUWDroneBoat::imuCallback(const sensor_msgs::Imu& message)
 {
-  algorithm_.addData(message.temperature);
+  //algorithm_.addData(message.angular_velocity);
+}
+
+void LocalizationUWDroneBoat::odometryCallback(const sensor_msgs::Temperature& message){
+    //get odometry values from optical_flow
+
 }
 
 bool LocalizationUWDroneBoat::serviceCallback(std_srvs::Trigger::Request& request,
                                               std_srvs::Trigger::Response& response)
 {
-  response.success = true;
-  response.message = "The average is " + std::to_string(algorithm_.getAverage());
+  //response.success = true;
+  //response.message = "The average is " + std::to_string(algorithm_.getAverage());
   return true;
 }
 

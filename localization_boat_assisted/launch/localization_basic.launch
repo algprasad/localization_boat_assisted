@@ -2,7 +2,7 @@
 
   <!-- Launch ROS Package Template Node -->
   <node pkg="localization_boat_assisted" type="localization_boat_assisted" name="localization_boat_assisted" output="screen">
-    <rosparam command="load" file="$(dirname)/../config/default.yaml" />
+    <rosparam command="load" file="$(find localization_boat_assisted)/config/default.yaml" />
   </node>
 
 </launch>

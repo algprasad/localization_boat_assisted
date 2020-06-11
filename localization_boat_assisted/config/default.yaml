@@ -1,1 +1,2 @@
-subscriber_topic: /temperature
+sub_imu_topic: /mavros/imu/data
+sub_odometry_topic: /mavros/optical_flow

@@ -5,6 +5,7 @@
 // ROS
 #include <ros/ros.h>
 #include <sensor_msgs/Temperature.h>
+#include <sensor_msgs/Imu.h>
 #include <std_srvs/Trigger.h>
 
 namespace localization_boat_assisted {
@@ -34,10 +35,17 @@ class LocalizationUWDroneBoat
   bool readParameters();
 
   /*!
-   * ROS topic callback method.
-   * @param message the received message.
+   * IMU topic callback method.
+   * @param for imu messages given by pixhawk.
    */
-  void topicCallback(const sensor_msgs::Temperature& message);
+  void imuCallback(const sensor_msgs::Imu& message);
+
+  /*!
+   * IMU topic callback method.
+   * @param odometry message given by optical flow
+   */
+  void odometryCallback(const sensor_msgs::Temperature& message);
+
 
   /*!
    * ROS service server callback.
@@ -52,10 +60,12 @@ class LocalizationUWDroneBoat
   ros::NodeHandle& nodeHandle_;
 
   //! ROS topic subscriber.
-  ros::Subscriber subscriber_;
+  ros::Subscriber imu_subscriber_;
+  ros::Subscriber odometry_subscriber_;
 
   //! ROS topic name to subscribe to.
-  std::string subscriberTopic_;
+  std::string imu_subscriber_topic_;
+  std::string odometry_subscriber_topic_;
 
   //! ROS service server.
   ros::ServiceServer serviceServer_;

@@ -16,7 +16,7 @@ find_package(catkin REQUIRED
     sensor_msgs
     roslint
 )
-
+find_package(GTSAM REQUIRED)
 ## Find system libraries
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
@@ -55,6 +55,10 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+set(AUX_SRC_FILES include/localization_boat_assisted/RosData.h
+        include/localization_boat_assisted/GTSAMData.h
+        )
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
@@ -66,14 +70,14 @@ include_directories(
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME}_core
-   src/Algorithm.cpp
+   src/Algorithm.cpp ${AUX_SRC_FILES}
 )
 #target_compile_features(${PROJECT_NAME}_core INTERFACE cxx_std_11)
 
 ## Declare cpp executables
 add_executable(${PROJECT_NAME}
   src/${PROJECT_NAME}_node.cpp
-        src/LocalizationUWDroneBoat.cpp
+        src/RosHandle.cpp
 )
 #target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
 

@@ -13,19 +13,19 @@ namespace localization_boat_assisted {
 /*!
  * Main class for the node to handle the ROS interfacing.
  */
-class LocalizationUWDroneBoat
+class RosHandle
 {
  public:
   /*!
    * Constructor.
    * @param nodeHandle the ROS node handle.
    */
-  LocalizationUWDroneBoat(ros::NodeHandle& nodeHandle);
+  RosHandle(ros::NodeHandle& nodeHandle);
 
   /*!
    * Destructor.
    */
-  virtual ~LocalizationUWDroneBoat();
+  virtual ~RosHandle();
 
  private:
   /*!

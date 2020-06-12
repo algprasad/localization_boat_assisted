@@ -7,9 +7,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
 ## enforcing cleaner code.
-add_definitions(-Wall -Werror)
-
+#TODO: uncomment this when you find a better way to include string file names back so that compiler does
+#add_definitions(-Wall -Werror)
+# Using Eigen from the GTSAM library to avoid headaches
+set(GTSAM_EIGEN_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/Eigen" )
+##set Eigen path
+#set(Eigen3_DIR "/usr/lib/cmake/eigen3/")
 ## Find catkin macros and libraries
+##
 find_package(catkin REQUIRED
   COMPONENTS
     roscpp
@@ -18,8 +23,9 @@ find_package(catkin REQUIRED
 )
 find_package(GTSAM REQUIRED)
 ## Find system libraries
-find_package(Eigen3 REQUIRED)
+#find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -34,10 +40,12 @@ catkin_package(
   INCLUDE_DIRS
     include
     ## This is only necessary because Eigen3 sets a non-standard EIGEN3_INCLUDE_DIR variable
-    ${EIGEN3_INCLUDE_DIR}
-  LIBRARIES
+    #${EIGEN3_INCLUDE_DIR}
+    ${GTSAM_EIGEN_INCLUDE_DIRS}
+    ${GTSAM_INCLUDE_DIR}
+    LIBRARIES
     ${PROJECT_NAME}_core
-  CATKIN_DEPENDS
+    CATKIN_DEPENDS
     roscpp
     sensor_msgs
   DEPENDS
@@ -52,23 +60,28 @@ catkin_package(
 ###########
 ## Build ##
 ###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
+# Set all auxillary header files here
 set(AUX_SRC_FILES include/localization_boat_assisted/RosData.h
         include/localization_boat_assisted/GTSAMData.h
         )
+
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+
+
+
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   # Set manually because Eigen sets a non standard INCLUDE DIR
-  ${EIGEN3_INCLUDE_DIR}
+        ${GTSAM_EIGEN_INCLUDE_DIRS}
   # Set because Boost is an internal dependency, not transitive.
-  ${Boost_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS} ${GTSAM_INCLUDE_DIR}
 )
 
-## Declare a cpp library
+## Declare a cpp library #TODO: Maybe remove the AUX_SRC_FILES from here
 add_library(${PROJECT_NAME}_core
    src/Algorithm.cpp ${AUX_SRC_FILES}
 )
@@ -92,12 +105,13 @@ add_dependencies(${PROJECT_NAME}
 
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}_core
-  ${catkin_LIBRARIES}
+  ${catkin_LIBRARIES} gtsam yaml-cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
   ${PROJECT_NAME}_core
   ${catkin_LIBRARIES}
+        gtsam yaml-cpp
 )
 
 #############

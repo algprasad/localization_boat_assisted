@@ -14,6 +14,12 @@
 #include <gtsam/nonlinear/LevenbergMarquardtOptimizer.h>
 #include <gtsam/nonlinear/LevenbergMarquardtParams.h>
 #include <gtsam/geometry/Cal3_S2.h>
+#include <yaml-cpp/yaml.h>
+
+//including this for getting current directory //FIXME: change this for a better way to get current directory
+#include <stdio.h>
+#include <unistd.h>
+#define GetCurrentDir getcwd
 
 namespace localization_boat_assisted{
 struct GTSAMData {
@@ -50,7 +56,23 @@ public:
 
     /** Constructor */
     GTSAMData(){
-        //initialize values of K_, lm_params_,  and prior poses and noise values
+        //getting the config filename
+        char buff[FILENAME_MAX];
+        getcwd(buff, FILENAME_MAX);
+        std::string current_working_dir(buff);
+        std::string gtsam_config_file = current_working_dir + "../../config/gtsam_config.yaml";
+        YAML::Node gtsam_config = YAML::LoadFile(gtsam_config_file);
+        double fx = gtsam_config["f_x"].as<double_t >();
+        double fy = gtsam_config["f_y"].as<double_t >();
+        double s = gtsam_config["s"].as<double_t >();
+        double ux = gtsam_config["u_x"].as<double_t >();
+        double uy = gtsam_config["u_y"].as<double_t >();
+
+        std::cout<<"focalx: "<<fx<<std::endl;
+
+
+
+
 
     }
 

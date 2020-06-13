@@ -16,14 +16,15 @@
 #include <gtsam/geometry/Cal3_S2.h>
 #include <yaml-cpp/yaml.h>
 
-//including this for getting current directory //FIXME: change this for a better way to get current directory
-#include <stdio.h>
-#include <unistd.h>
-#define GetCurrentDir getcwd
+#include <boost/filesystem.hpp>
+
 
 namespace localization_boat_assisted{
-struct GTSAMData {
+
+class GTSAMData {
 public:
+    /** GTSAM Config file name*/
+    std::string gtsam_config_filename_;
     /** Camera parameters from config file */
     gtsam::Cal3_S2::shared_ptr K_;
 
@@ -40,47 +41,37 @@ public:
     gtsam::Values initial_estimate_;
     gtsam::Values result_;
 
-    /** Prior Values */
+    /** Prior Values */ //TODO: Maybe prior should be set along with initial value
     gtsam::Pose3 prior_pose_drone_ ;
     gtsam::Pose3 prior_pose_boat_;
 
 
     /** Noise values*/
-    gtsam::noiseModel::Isotropic::shared_ptr pixel_noise_;
+    gtsam::noiseModel::Isotropic::shared_ptr marker_pixel_noise_;
     gtsam::noiseModel::Diagonal::shared_ptr drone_odometry_noise_; //between_drone noise
     gtsam::noiseModel::Diagonal::shared_ptr boat_pose_noise_; //between_marker_noise
 
     /** Noise Pose Prior*/
     gtsam::noiseModel::Diagonal::shared_ptr pose_prior_noise_;
 
+    void setBodyPSensor();
+    void setK();
+    void getYamlFile();
 
+    /**Set LM Params from the config file*/
+    void setLMParams();
+
+    void setNoiseValues();
     /** Constructor */
     GTSAMData(){
-        //getting the config filename
-        char buff[FILENAME_MAX];
-        getcwd(buff, FILENAME_MAX);
-        std::string current_working_dir(buff);
-        std::string gtsam_config_file = current_working_dir + "../../config/gtsam_config.yaml";
-        YAML::Node gtsam_config = YAML::LoadFile(gtsam_config_file);
-        double fx = gtsam_config["f_x"].as<double_t >();
-        double fy = gtsam_config["f_y"].as<double_t >();
-        double s = gtsam_config["s"].as<double_t >();
-        double ux = gtsam_config["u_x"].as<double_t >();
-        double uy = gtsam_config["u_y"].as<double_t >();
 
-        std::cout<<"focalx: "<<fx<<std::endl;
-
-
-
-
+        getYamlFile();
+        setK();
+        setBodyPSensor();
+        setLMParams();
+        setNoiseValues();
 
     }
-
-
-
-
-
-
 };
 
 }

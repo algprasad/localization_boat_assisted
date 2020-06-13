@@ -63,6 +63,7 @@ catkin_package(
 # Set all auxillary header files here
 set(AUX_SRC_FILES include/localization_boat_assisted/RosData.h
         include/localization_boat_assisted/GTSAMData.h
+        src/GTSAMData.cpp
         )
 
 

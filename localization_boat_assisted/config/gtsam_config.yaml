@@ -1,7 +1,18 @@
-#camera parameters
-f_x: 50
-f_y: 50
-s: 0
-u_x: 50
-u_y: 50
+#camera matrix # [fx, fy, s, ux, uy]
+k: [50, 50, 0, 50, 50]
+
+# transformation from base_link to camera_link
+body_p_sensor:  [1, 0, 0, 0,
+                 0, 1, 0, 0,
+                 0, 0, 1, 0,
+                 0, 0, 0, 1]
+
+# LM Parameters
+relative_tolerance: 1e-25
+
+# noise values
+pixel_noise: 2 # std_dev in pixels
+drone_odometry_noise: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+boat_pose_noise: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+prior_pose_noise: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 

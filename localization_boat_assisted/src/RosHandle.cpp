@@ -1,4 +1,5 @@
 #include "localization_boat_assisted/RosHandle.hpp"
+#include <geometry_msgs/PoseStamped.h>
 
 // STD
 #include <string>
@@ -6,7 +7,7 @@
 namespace localization_boat_assisted {
 
 RosHandle::RosHandle(ros::NodeHandle& nodeHandle)
-    : nodeHandle_(nodeHandle)
+    : nodeHandle_(nodeHandle), rate_(ros_rate_hz)
 {
   if (!readParameters()) {
     ROS_ERROR("Could not read parameters.");
@@ -27,6 +28,7 @@ RosHandle::~RosHandle()
 
 bool RosHandle::readParameters()
 {
+  if (!nodeHandle_.getParam("ros_rate", ros_rate_hz)) return false;
   if (!nodeHandle_.getParam("sub_imu_topic", imu_subscriber_topic_)) return false;
   if (!nodeHandle_.getParam("sub_odometry_topic", odometry_subscriber_topic_)) return false;
 
@@ -35,12 +37,8 @@ bool RosHandle::readParameters()
 
 void RosHandle::imuCallback(const sensor_msgs::Imu& message)
 {
-  //algorithm_.addData(message.angular_velocity);
-}
-
-void RosHandle::odometryCallback(const sensor_msgs::Temperature& message){
-    //get odometry values from optical_flow
-
+  ros_data_.setAngularVelocity(message);
+  ros_data_.setBoolNewAngularVelocity(true);
 }
 
 bool RosHandle::serviceCallback(std_srvs::Trigger::Request& request,
@@ -49,6 +47,12 @@ bool RosHandle::serviceCallback(std_srvs::Trigger::Request& request,
   //response.success = true;
   //response.message = "The average is " + std::to_string(algorithm_.getAverage());
   return true;
+}
+
+void RosHandle::odometryCallback(const geometry_msgs::PoseStamped &message) {
+    ros_data_.setLinearVelocity(message);
+    ros_data_.setBoolNewLinearVelocity(true);
+
 }
 
 } /* namespace */

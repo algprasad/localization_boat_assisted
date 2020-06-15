@@ -68,3 +68,11 @@ void localization_boat_assisted::GTSAMData::setNoiseValues() {
                     prior_pose_noise[3], prior_pose_noise[4], prior_pose_noise[5]).finished());
 
 }
+
+void localization_boat_assisted::GTSAMData::setBoatConstantVelocity() {
+    YAML::Node gtsam_config = YAML::LoadFile(this->gtsam_config_filename_);
+    std::vector<double> boat_constant_velocity = gtsam_config["boat_constant_velocity"].as<std::vector<double> >();
+    this->boat_constant_velocity_ =  gtsam::Pose3(gtsam::Rot3::Rodrigues(boat_constant_velocity[0], boat_constant_velocity[1], boat_constant_velocity[2]),
+            gtsam::Point3(boat_constant_velocity[3], boat_constant_velocity[4],  boat_constant_velocity[5]));
+
+}

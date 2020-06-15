@@ -37,9 +37,6 @@ public:
     /**  Main factor graph*/
     gtsam::NonlinearFactorGraph factor_graph_;
 
-    /** Initial and final estimates obtained from factor graph*/
-    gtsam::Values initial_estimate_;
-    gtsam::Values result_;
 
     /** Prior Values */ //TODO: Maybe prior should be set along with initial value
     gtsam::Pose3 prior_pose_drone_ ;
@@ -54,6 +51,9 @@ public:
     /** Noise Pose Prior*/
     gtsam::noiseModel::Diagonal::shared_ptr pose_prior_noise_;
 
+    /** Constant velocity factor for marker default values*/
+    gtsam::Pose3 boat_constant_velocity_;
+
     void setBodyPSensor();
     void setK();
     void getYamlFile();
@@ -62,7 +62,10 @@ public:
     void setLMParams();
 
     void setNoiseValues();
-    /** Constructor */
+
+    void setBoatConstantVelocity();
+
+/** Constructor */
     GTSAMData(){
 
         getYamlFile();
@@ -70,6 +73,7 @@ public:
         setBodyPSensor();
         setLMParams();
         setNoiseValues();
+        setBoatConstantVelocity();
 
     }
 };

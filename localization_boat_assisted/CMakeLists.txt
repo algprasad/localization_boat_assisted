@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #add_definitions(-Wall -Werror)
 # Using Eigen from the GTSAM library to avoid headaches
 set(GTSAM_EIGEN_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/Eigen" )
+set(aruco_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/aruco3.1.6/build")
 ##set Eigen path
 #set(Eigen3_DIR "/usr/lib/cmake/eigen3/")
 ## Find catkin macros and libraries
@@ -22,6 +23,7 @@ find_package(catkin REQUIRED
     roslint
 )
 find_package(GTSAM REQUIRED)
+find_package(aruco REQUIRED)
 ## Find system libraries
 #find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
@@ -64,7 +66,8 @@ catkin_package(
 set(AUX_SRC_FILES include/localization_boat_assisted/RosData.h
         include/localization_boat_assisted/GTSAMData.h
         src/GTSAMData.cpp
-        )
+        src/GTSAMHandle.cpp include/localization_boat_assisted/GTSAMHandle.h
+        include/localization_boat_assisted/MarkerFactor.h src/ArUcoMarker.cpp include/localization_boat_assisted/ArUcoMarker.h)
 
 
 ## Specify additional locations of header files
@@ -81,10 +84,9 @@ include_directories(
   # Set because Boost is an internal dependency, not transitive.
   ${Boost_INCLUDE_DIRS} ${GTSAM_INCLUDE_DIR}
 )
-
 ## Declare a cpp library #TODO: Maybe remove the AUX_SRC_FILES from here
 add_library(${PROJECT_NAME}_core
-   src/Algorithm.cpp ${AUX_SRC_FILES}
+    ${AUX_SRC_FILES}
 )
 #target_compile_features(${PROJECT_NAME}_core INTERFACE cxx_std_11)
 
@@ -106,13 +108,13 @@ add_dependencies(${PROJECT_NAME}
 
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}_core
-  ${catkin_LIBRARIES} gtsam yaml-cpp
+  ${catkin_LIBRARIES} gtsam yaml-cpp aruco
 )
 
 target_link_libraries(${PROJECT_NAME}
   ${PROJECT_NAME}_core
   ${catkin_LIBRARIES}
-        gtsam yaml-cpp
+        gtsam yaml-cpp aruco
 )
 
 #############
@@ -144,14 +146,14 @@ install(
 ## Testing ##
 #############
 
-if(${CATKIN_ENABLE_TESTING})
+#[[if(${CATKIN_ENABLE_TESTING})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 ## Add gtest based cpp test target and link libraries
 catkin_add_gtest(${PROJECT_NAME}-test
         test/test_localization_boat_assisted.cpp
   test/AlgorithmTest.cpp)
 target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_core)
-endif()
+endif() ]]
 
 ##########################
 ## Static code analysis ##

@@ -15,6 +15,10 @@ RosHandle::RosHandle(ros::NodeHandle& nodeHandle)
   }
   imu_subscriber_ = nodeHandle_.subscribe(imu_subscriber_topic_, 1,
                                           &RosHandle::imuCallback, this);
+
+  image_subscriber_ = nodeHandle_.subscribe(image_subscriber_topic_, 1,
+                                            &RosHandle::imageCallback, this);
+
   odometry_subscriber_ = nodeHandle_.subscribe(odometry_subscriber_topic_, 1, &RosHandle::odometryCallback, this );
 
   serviceServer_ = nodeHandle_.advertiseService("future_addition",
@@ -30,6 +34,7 @@ bool RosHandle::readParameters()
 {
   if (!nodeHandle_.getParam("ros_rate", ros_rate_hz)) return false;
   if (!nodeHandle_.getParam("sub_imu_topic", imu_subscriber_topic_)) return false;
+  if (!nodeHandle_.getParam("sub_image_topic", image_subscriber_topic_)) return false;
   if (!nodeHandle_.getParam("sub_odometry_topic", odometry_subscriber_topic_)) return false;
 
   return true;
@@ -52,6 +57,12 @@ bool RosHandle::serviceCallback(std_srvs::Trigger::Request& request,
 void RosHandle::odometryCallback(const geometry_msgs::PoseStamped &message) {
     ros_data_.setLinearVelocity(message);
     ros_data_.setBoolNewLinearVelocity(true);
+
+}
+
+void RosHandle::imageCallback(const sensor_msgs::Image &message) {
+    ros_data_.setImage(message);
+    ros_data_.setBoolNewImage(true);
 
 }
 

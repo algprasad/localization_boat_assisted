@@ -22,15 +22,25 @@ public:
         /** ROSHandle object*/
         RosHandle ros_handle_;
 
-        /** GTSAMData*/
-        static GTSAMData gtsam_data_;
+        /** Keep track of poses of boat and drone*/ //making these non static
+        int drone_pose_index_;
+        int boat_pose_index_;
+
+
+
+
+        /** GTSAMData*/ //making it non static
+        GTSAMData gtsam_data_;
 
 
         /**
          * Constructor
          * @param ros_handle interfaces with ROS
          * **/
-        GTSAMHandle(RosHandle ros_handle) : ros_handle_(ros_handle) {}
+        GTSAMHandle(RosHandle ros_handle) : ros_handle_(ros_handle) {
+            boat_pose_index_ = 0;
+            drone_pose_index_ = 0;
+        }
 
         /** Helper function to calculate between odometry poses*/
         gtsam::Pose3 calculateBetweenPose(Eigen::Vector3d linear_velocity, Eigen::Vector3d angular_velocity);
@@ -39,7 +49,10 @@ public:
         void addOdometryFactor();
 
         /** Adds IMU factor between boat/marker nodes */
-        gtsam::Pose3 addConstantVelocityFactor(const gtsam::Pose3& constant_velocity); //includes both linear and angular velocity
+        void addConstantVelocityFactor(const gtsam::Pose3& constant_velocity); //includes both linear and angular velocity
+        void addConstantVelocityFactor(); //using default value from the config file
+
+        gtsam::Pose3 calculateBetweenMarkerPose(const gtsam::Pose3& constant_velocity);
 
         /** Adds MarkerFactor between drone and boat/Marker */
         void addMarkerFactor();
@@ -55,6 +68,9 @@ public:
 
         /** Get incremental estimate */
         void getIncrementalEstimate();
+
+        /** Build Factor graph by calling the right addFactor functions and adding initial values */
+        void buildFactorGraph();
 
 
 };

@@ -12,8 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Using Eigen from the GTSAM library to avoid headaches
 set(GTSAM_EIGEN_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/Eigen" )
 set(aruco_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/aruco3.1.6/build")
-##set Eigen path
-#set(Eigen3_DIR "/usr/lib/cmake/eigen3/")
+
 ## Find catkin macros and libraries
 ##
 find_package(catkin REQUIRED
@@ -22,10 +21,9 @@ find_package(catkin REQUIRED
     sensor_msgs
     roslint
 )
+find_package(OpenCV REQUIRED)
 find_package(GTSAM REQUIRED)
 find_package(aruco REQUIRED)
-## Find system libraries
-#find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
@@ -73,8 +71,8 @@ set(AUX_SRC_FILES include/localization_boat_assisted/RosData.h
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 
-
-
+message("ARUCOOOOOOOO")
+message("${OpenCV_LIBS}")
 
 include_directories(
   include
@@ -84,6 +82,8 @@ include_directories(
   # Set because Boost is an internal dependency, not transitive.
   ${Boost_INCLUDE_DIRS} ${GTSAM_INCLUDE_DIR}
 )
+
+link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/aruco3.1.6/build/src")
 ## Declare a cpp library #TODO: Maybe remove the AUX_SRC_FILES from here
 add_library(${PROJECT_NAME}_core
     ${AUX_SRC_FILES}
@@ -108,12 +108,14 @@ add_dependencies(${PROJECT_NAME}
 
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}_core
-  ${catkin_LIBRARIES} gtsam yaml-cpp aruco
+  ${catkin_LIBRARIES} ${OpenCV_LIBS}
+        aruco
+        gtsam yaml-cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
   ${PROJECT_NAME}_core
-  ${catkin_LIBRARIES}
+  ${catkin_LIBRARIES} ${OpenCV_LIBS}
         gtsam yaml-cpp aruco
 )
 
@@ -146,14 +148,14 @@ install(
 ## Testing ##
 #############
 
-#[[if(${CATKIN_ENABLE_TESTING})
+if(${CATKIN_ENABLE_TESTING})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 ## Add gtest based cpp test target and link libraries
 catkin_add_gtest(${PROJECT_NAME}-test
         test/test_localization_boat_assisted.cpp
   test/AlgorithmTest.cpp)
 target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME}_core)
-endif() ]]
+endif()
 
 ##########################
 ## Static code analysis ##

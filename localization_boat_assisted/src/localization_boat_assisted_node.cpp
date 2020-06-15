@@ -12,12 +12,11 @@ int main(int argc, char** argv)
   localization_boat_assisted::GTSAMHandle gtsam_handle(ros_handle);
 
   while(ros::ok()){
-      //call the algorithm here.. not exceeding one or two sentences
-
-      //getting the data??
-
       //making the graph
+      gtsam_handle.buildFactorGraph();
+
       //optimizing
+      gtsam_handle.getIncrementalEstimate(); //TODO: Change according to what is suggested in the config file. Incremental or batch
 
       ros::spinOnce();
   }

@@ -5,6 +5,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Temperature.h>
 #include <sensor_msgs/Imu.h>
+#include <sensor_msgs/Image.h>
 #include <std_srvs/Trigger.h>
 #include <geometry_msgs/PoseStamped.h>
 #include "RosData.h"
@@ -49,6 +50,12 @@ private:
 
   /*!
    * IMU topic callback method.
+   * @param for imu messages given by pixhawk.
+   */
+  void imageCallback(const sensor_msgs::Image& message);
+
+  /*!
+   * IMU topic callback method.
    * @param odometry message given by optical flow
    */
   void odometryCallback(const geometry_msgs::PoseStamped& message);
@@ -69,10 +76,12 @@ private:
   //! ROS topic subscriber.
   ros::Subscriber imu_subscriber_;
   ros::Subscriber odometry_subscriber_;
+  ros::Subscriber image_subscriber_;
 
   //! ROS topic name to subscribe to.
   std::string imu_subscriber_topic_;
   std::string odometry_subscriber_topic_;
+  std::string image_subscriber_topic_;
 
   //! ROS service server.
   ros::ServiceServer serviceServer_;

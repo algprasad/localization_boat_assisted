@@ -23,6 +23,7 @@ void localization_boat_assisted::GTSAMHandle::addOdometryFactor() {
 
         drone_pose_index_++;
 
+
         ros_handle_.ros_data_.resetBools();
     }
 
@@ -94,5 +95,10 @@ void localization_boat_assisted::GTSAMHandle::buildFactorGraph() {
     addOdometryFactor();
     addConstantVelocityFactor();
     addMarkerFactor();
+}
+
+void localization_boat_assisted::GTSAMHandle::addInitialValueMarker(int marker_pose_number, gtsam::Pose3 pose_value) {
+
+
 }
 
